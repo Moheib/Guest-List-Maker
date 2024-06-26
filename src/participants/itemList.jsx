@@ -11,6 +11,7 @@ import * as R from 'ramda';
 import { ChevronLeft, Close, SearchOutlined } from '@mui/icons-material';
 import { css } from '@emotion/react';
 
+
 export const StyledTable = styled.table`
   width: 78%;
   border-collapse: collapse;
@@ -35,6 +36,28 @@ export const StyledTableRow = styled.tr`
 export const StyledTableCell = styled.td`
   border: 1px solid #ddd;
   padding: 8px;
+`;
+
+const NavItems = styled.div`
+display: flex;
+flex-direction: row-reverse;
+justify-content: space-between;
+align-item:center;
+padding: 1rem; 
+background-color: #f9f9f9;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+height: 2.5rem;
+& > * {
+  margin-left: 1rem;
+}
+`;
+
+const StyledHeading = styled.h1`
+font-family: 'Arial', sans-serif; /* Specify a font family */
+font-size: 24px; 
+color: #f9a825; 
+align-item:center;
+text-transform:uppercase;
 `;
 
 const ItemList = ({ handleOpen, data, setData }) => {
@@ -110,65 +133,10 @@ const ItemList = ({ handleOpen, data, setData }) => {
     dispatch(toggleRefresh());
   };
 
-  const NavItems = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-  align-item:center;
-  padding: 1rem; 
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-  height: 2.5rem;
-  & > * {
-    margin-left: 1rem;
-  }
-`;
-
-  const StyledHeading = styled.h1`
-  font-family: 'Arial', sans-serif; /* Specify a font family */
-  font-size: 24px; 
-  color: #f9a825; 
-  align-item:center;
-  text-transform:uppercase;
-`;
-
   const totalMembers = R.pipe(
     R.pluck('total_Members'), // Extract 'id' values from each object
     R.sum // Calculate the sum
   )(filteredItems);
-
-
-
-
-
-
-
-
-  const StyledWrapper = styled.div`
-display: flex;
-align-items: center;
-cursor: pointer;
-`;
-
-  const StyledSearchInput = styled.input`
-padding: 0.3rem;
-transition: transform 0.3s ease-out;
-transform: ${(props) => (props.isOpen ? 'translateY(0)' : 'translateY(-100%)')};
-
-&:focus {
-  outline: none;
-}
-`;
-
-
-  const handleKeypress = (e) => {
-    // Handle keypress event
-  };
-
-  const toggleSearchBox = () => {
-    setIsSearchBoxOpen(!isSearchBoxOpen);
-  };
-
 
   const headers = [
     { label: "Name", key: "name" },
@@ -177,61 +145,26 @@ transform: ${(props) => (props.isOpen ? 'translateY(0)' : 'translateY(-100%)')};
     { label: "Event Day", key: "is_Barat_Invited" }
   ];
 
+
+  // const downloadPDF = () => {
+  //   const options = {
+  //     fileName: "wedding_guest_list.pdf",
+  //     content: (
+  //       <ExportAsPdf
+  //         data={filteredItems}
+  //         headers={headers}
+  //         title="Wedding Guest List"
+  //       >
+  //         {({ toPdf }) => <button onClick={toPdf}>Download as PDF</button>}
+  //       </ExportAsPdf>
+  //     ),
+  //   };
+
   return (
     <>
       <NavItems>
 
-        {/* <StyledWrapper
-          onClick={toggleSearchBox}
-          css={css`
-        border: 2px solid red;
-        padding: 0.3rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: space-between;
-      `}
-          style={{ border: "2px solid red" }}>
-
-          <Tooltip title="Search" placement="top">
-            <div
-              onClick={() => {
-                setIsSearchBoxOpen(true);
-                searchInputRef.current.focus();
-              }}
-              style={{ padding: "0.3rem" }}
-            >
-              <SearchOutlined />
-            </div>
-          </Tooltip>
-          <StyledSearchInput
-            placeholder="Search"
-            value=""
-            onKeyPress={handleKeypress}
-            ref={searchInputRef}
-            isOpen={isSearchBoxOpen} open={isSearchBoxOpen}>
-            <input
-              placeholder="Search"
-              value={"searchValue"}
-              onKeyPress={e => handleKeypress(e)}
-              // onChange={e => setSearchValue(e.target.value)}
-              ref={searchInputRef}
-            />
-            <Tooltip title="Clear" placement="top">
-              <Close style={{ fontSize: "14px" }} onClick={""}></Close>
-            </Tooltip>
-            <Tooltip title="Close Drawrer" placement="top">
-              <ChevronLeft
-                onClick={() => {
-                  // clearSearchFilter();
-                  setIsSearchBoxOpen(false);
-                }}
-                style={{ fontSize: "30px" }}
-              ></ChevronLeft>
-            </Tooltip>
-          </StyledSearchInput>
-        </StyledWrapper> */}
-
-        <Button variant="contained" onClick={handleOpen}>
+        <Button variant="contained" onClick={""}>
           Download
         </Button>
         <StyledHeading>Wedding Guest List</StyledHeading>
@@ -280,12 +213,13 @@ transform: ${(props) => (props.isOpen ? 'translateY(0)' : 'translateY(-100%)')};
       />}
     </>
   )
-}
 
-function getEventDay(barat, walima) {
-  if (barat & walima) return "Barat And Walima";
-  if (barat & !walima) return "Barat";
-  if (!barat & walima) return "Walima";
-  return
+
+  function getEventDay(barat, walima) {
+    if (barat & walima) return "Barat And Walima";
+    if (barat & !walima) return "Barat";
+    if (!barat & walima) return "Walima";
+    return
+  }
 }
 export default ItemList
