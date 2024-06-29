@@ -10,6 +10,9 @@ import FilterDrawer from '../filters/filterDrawrer';
 import * as R from 'ramda';
 import { ChevronLeft, Close, SearchOutlined } from '@mui/icons-material';
 import { css } from '@emotion/react';
+import { saveAs } from 'file-saver';
+import { pdf } from '@react-pdf/renderer';
+import MyDocument from '../download/pdfDownload';
 
 
 export const StyledTable = styled.table`
@@ -73,9 +76,8 @@ const ItemList = ({ handleOpen, data, setData }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false)
+  const [filteredItems, setFilteredItems] = useState([]);
 
-  const [filteredItems, setFilteredItems] = useState([]); // Filtered list of items
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("data")) || []
     setItems(storedData)
@@ -89,7 +91,7 @@ const ItemList = ({ handleOpen, data, setData }) => {
   }
 
   const handleFilterChange = (newCriteria) => {
-    console.log(newCriteria, "NEW criteria", items)
+
     const filtered = items.filter(item => {
 
       if (!newCriteria.family && !newCriteria.barat && !newCriteria.walima) {
@@ -111,7 +113,6 @@ const ItemList = ({ handleOpen, data, setData }) => {
       return includeItem
     })
     setFilteredItems(filtered)
-    console.log(filtered, "filtered")
   };
 
   const handleCloseDialog = () => {
@@ -133,6 +134,10 @@ const ItemList = ({ handleOpen, data, setData }) => {
     dispatch(toggleRefresh());
   };
 
+  const onValueChange = ({ target: input }) => {
+    setFilteredItems(items.filter(f => f.member_Name.toLowerCase().includes(input.value)));
+  }
+
   const totalMembers = R.pipe(
     R.pluck('total_Members'), // Extract 'id' values from each object
     R.sum // Calculate the sum
@@ -145,32 +150,30 @@ const ItemList = ({ handleOpen, data, setData }) => {
     { label: "Event Day", key: "is_Barat_Invited" }
   ];
 
-
-  // const downloadPDF = () => {
-  //   const options = {
-  //     fileName: "wedding_guest_list.pdf",
-  //     content: (
-  //       <ExportAsPdf
-  //         data={filteredItems}
-  //         headers={headers}
-  //         title="Wedding Guest List"
-  //       >
-  //         {({ toPdf }) => <button onClick={toPdf}>Download as PDF</button>}
-  //       </ExportAsPdf>
-  //     ),
-  //   };
+  const handleDownload = async () => {
+    try {
+      const blob = await pdf(<MyDocument data={filteredItems} totalMembers={totalMembers} />).toBlob();
+      saveAs(blob, 'membersDetails.pdf');
+    } catch (error) {
+      console.error(error, "ERROR HERE in CONSOLE ");
+    }
+  };
 
   return (
     <>
       <NavItems>
 
-        <Button variant="contained" onClick={""}>
+        <Button variant="contained" onClick={handleDownload}>
           Download
         </Button>
         <StyledHeading>Wedding Guest List</StyledHeading>
+
+        <input type="text" name="searchByText" placeholder='Search By Name' onChange={onValueChange} />
+
         <Button variant="contained" onClick={handleOpen}>
           Add Guest
         </Button>
+
 
       </NavItems>
       <FilterDrawer onFilterChange={handleFilterChange} />

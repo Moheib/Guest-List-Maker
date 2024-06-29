@@ -18,7 +18,7 @@ export default function FilterDrawer({ onFilterChange }) {
     const [state, setState] = React.useState({
         family: false,
         barat: false,
-        walima: false
+        walima: false,
     });
 
     React.useEffect(() => {
@@ -85,12 +85,7 @@ export default function FilterDrawer({ onFilterChange }) {
 
     return (
         <div >
-            <CustomDrawer
-            // anchor={'right'}
-            // open={drawrerState.right}
-            // onClose={toggleDrawer('right', false)}
-
-            >
+            <CustomDrawer>
                 {list('right')}
             </CustomDrawer>
         </div>
